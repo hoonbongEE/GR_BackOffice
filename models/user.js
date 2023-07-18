@@ -62,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Users',
+      modelName: 'User',
       // paranoid: true, // deletedAt 유저 삭제일 // soft
     }
   );

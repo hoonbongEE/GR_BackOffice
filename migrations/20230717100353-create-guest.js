@@ -19,12 +19,11 @@ module.exports = {
         onDelete: 'CASCADE',
       },
 
-      title: {
+      career: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      content: {
-        type: Sequelize.STRING,
-      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
