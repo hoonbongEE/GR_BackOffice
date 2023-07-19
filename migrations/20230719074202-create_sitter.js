@@ -2,8 +2,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('guests', {
-      guestId: {
+    await queryInterface.createTable('sitters', {
+      sitterId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -18,18 +18,25 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       },
+      career: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
 
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
+
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('guests');
+    await queryInterface.dropTable('sitters');
   },
 };

@@ -18,6 +18,13 @@ class UserController {
     );
     res.status(200).json({ loging });
   };
+
+  login = async (req, res, next) => {
+    const { email, password } = req.body;
+    const result = await this.userService.login(res, email, password);
+
+    res.status(200).json(email);
+  };
 }
 
 module.exports = UserController;
