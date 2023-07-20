@@ -1,63 +1,103 @@
-const UserRepositori = require('../repositories/user.repositori.js');
+// user.service.js
+
 const bcrypt = require('bcrypt');
+const UserRepository = require('../repositories/user.repository');
+const SitterRepository = require('../repositories/sitter.repository');
+const GuestRepository = require('../repositories/guest.repository');
 const jwt = require('jsonwebtoken');
 
 class UserService {
-  // constructor() {
-  userRepositori = new UserRepositori();
+  constructor() {
+    this.userRepository = new UserRepository();
+    this.sitterRepository = new SitterRepository();
+    this.guestRepository = new GuestRepository();
+  }
 
-  createUser = async (email, password, nickname, address, role, phone) => {
-    // console.log(email, password, nickname, address, role, phone);
-    try {
-      const exuser = await this.userRepositori.createUser(
-        email,
-        password,
-        nickname,
-        address,
-        role,
-        phone
-      );
-      // console.log(exuser);
-      return exuser;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  async createUser(email, password, nickname, address, role, phone) {
+    // Hash the password before storing it in the database
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 로그인
-  login = async (res, email, password) => {
-    // console.log(email, password);
-    // 1. 이메일로 사용자 정보 조회
-    const userlogin = await this.userRepositori.find(email);
-    // console.log(email);
+    // Call the create method from the UserRepository to create a new user in the database
+    const user = await this.userRepository.create({
+      email,
+      password: hashedPassword,
+      nickname,
+      address,
+      role,
+      phone,
+    });
 
-    // 2. 사용자 정보가 없으면 인증 실패
-    if (!userlogin || userlogin.length === 0) {
-      console.log('1>');
-      return res
-        .status(401)
-        .json({ errorMessage: '아이디 또는 패스워드를 확인해주세요.' });
+    // Create additional data based on the role
+    if (role === 'sitter') {
+      await this.sitterRepository.create({
+        UserId: user.userId,
+        career: '1 year',
+      });
+    } else {
+      await this.guestRepository.create({
+        UserId: user.userId,
+      });
     }
 
-    // 3. 비밀번호 비교
-    // const isValidPassword = await bcrypt.compare(password, userlogin.password);
-    // if (!isValidPassword) {
-    //   console.log('2>');
-    //   return res
-    //     .status(401)
-    //     .json({ errorMessage: '아이디 또는 패스워드를 확인해주세요 ' });
-    // }
+    return user;
+  }
 
-    // 4. 로그인 성공 시 JWT 토큰 생성
+  loginUser = async (email, password) => {
+    // Call the findByEmail method from the UserRepository to find the user by email
+    const user = await this.userRepository.findByEmail(email);
+
+    // Check if the user exists
+    if (!user) {
+      throw new Error('Invalid credentials.');
+    }
+
+    // Use bcrypt to securely compare the provided password with the user's hashed password
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordsMatch) {
+      throw new Error('Invalid credentials.');
+    }
+
+    // If passwords match, create a JWT token for the user
     const token = jwt.sign(
-      { userId: userlogin.userId },
+      {
+        userId: user.userId,
+      },
       process.env.JWT_SECRET,
       {
-        expiresIn: '1h', // 토큰 만료 시간 설정 (1시간)
+        expiresIn: '1h', // Set token expiration time (1 hour)
       }
     );
-    res.cookie('authorization', `Bearer ${token}`);
-    return userlogin;
+
+    // Return the JWT token
+    return token;
+  };
+
+  // Modify member information using PUT
+  updateUser = async (
+    userId,
+    email,
+    password,
+    nickname,
+    address,
+    role,
+    phone
+  ) => {
+    // Call the update method from the UserRepository to update the user information in the database
+    await this.userRepository.update(userId, {
+      email,
+      password,
+      nickname,
+      address,
+      role,
+      phone,
+    });
+  };
+
+  // Delete member information using DELETE
+  deleteUser = async userId => {
+    // Call the delete method from the UserRepository to delete the user from the database
+    await this.userRepository.delete(userId);
   };
 }
 
