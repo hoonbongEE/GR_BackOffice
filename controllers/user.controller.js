@@ -1,5 +1,3 @@
-// user.controller.js
-
 const UserService = require('../services/user.service');
 
 class UserController {
@@ -7,13 +5,10 @@ class UserController {
     this.userService = new UserService();
   }
 
-  // Join the membership
+  // 회원가입
   signup = async (req, res, next) => {
     try {
-      // Destructure user data from the request body
       const { email, password, nickname, address, role, phone } = req.body;
-
-      // Call the createUser method from the UserService to create a new user
       const signup = await this.userService.createUser(
         email,
         password,
@@ -22,39 +17,31 @@ class UserController {
         role,
         phone
       );
-
       console.log('Look here:', signup);
 
-      // Respond with a success message
-      res.status(200).json('Your registration has been completed.');
+      res.status(200).json('회원가입이 완료되었습니다.');
     } catch (error) {
-      // If an error occurs during signup, catch it here and respond with an error message
       console.error('Signup error:', error);
-      res.status(500).json({ errorMessage: 'Failed to create user.' });
+      res.status(500).json({ errorMessage: '중복된 이메일입니다.' });
     }
   };
 
-  // Log in
+  // 로그인
   loginUser = async (req, res) => {
     try {
       const { email, password } = req.body;
 
-      // Call the loginUser method from the UserService to authenticate the user
       const token = await this.userService.loginUser(email, password);
-
-      // Issue a cookie with the JWT token for the client to store
       await res.cookie('authorization', `petsitter ${token}`);
 
-      // Respond with a success message
-      return res.status(200).json({ message: 'Login successful' });
+      return res.status(200).json({ message: '로그인이 완료되었습니다.' });
     } catch (error) {
-      // If an error occurs during login, catch it here and respond with an error message
       console.error('Login Error:', error);
-      res.status(401).json({ message: 'Invalid credentials.' });
+      res.status(401).json({ message: '로그인이 실패하였습니다.' });
     }
   };
 
-  // Modify member information using PUT
+  // 회원정보 수정
   updateUser = async (req, res) => {
     try {
       const { email, password, nickname, address, role, phone } = req.body;
@@ -71,37 +58,27 @@ class UserController {
         phone
       );
 
-      // Respond with a success message
       return res
         .status(200)
-        .json({ message: 'Member information updated successfully.' });
+        .json({ message: '회원정보 수정이 완료되었습니다.' });
     } catch (error) {
-      // If an error occurs during user update, catch it here and respond with an error message
       console.error('Update Error:', error);
-      res
-        .status(500)
-        .json({ errorMessage: 'Failed to update member information.' });
+      res.status(500).json({ errorMessage: '회원정보 수정이 실패했습니다.' });
     }
   };
 
-  // Delete member information using DELETE
+  // 회원정보 삭제
   deleteUser = async (req, res) => {
     try {
       const { userId } = req.params;
-
-      // Call the deleteUser method from the UserService to delete the user
       await this.userService.deleteUser(userId);
 
-      // Respond with a success message
       return res
         .status(200)
-        .json({ message: 'Member information deleted successfully.' });
+        .json({ message: '회원정보 삭제가 정상적으로 처리되었습니다.' });
     } catch (error) {
-      // If an error occurs during user deletion, catch it here and respond with an error message
       console.error('Delete Error:', error);
-      res
-        .status(500)
-        .json({ errorMessage: 'Failed to delete member information.' });
+      res.status(500).json({ errorMessage: '회원정보 삭제가 실패했습니다.' });
     }
   };
 }
