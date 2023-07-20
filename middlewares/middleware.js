@@ -49,12 +49,3 @@ const authMiddleWare = async (authorization = null) => {
 };
 authMiddleWare();
 module.exports = auth;
-
-// post.('/',authMiddleWare ,(Req,res)=>{
-// 포스트 코멘트 = > id값이 생성됨
-// 테이블 => 값을 집어넣으면
-// 그 id값 서로가  게스가 a 시터b a= > b 예약을 했다
-// user 회원가입자체에서 패시터랑 게스트 id 만들면 더 편하지않나
-// rol userid 펫시터 상관x?
-
-// })
