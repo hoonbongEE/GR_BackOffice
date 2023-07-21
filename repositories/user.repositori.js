@@ -1,42 +1,41 @@
-const { User, guest, sitter } = require('../models');
+const { User } = require('../models');
 
-class UserRepositori {
-  createUser = async (email, password, nickname, address, role, phone) => {
-    console.log(email);
-    const user = await User.create({
-      email,
-      password,
-      nickname,
-      address,
-      role,
-      phone,
-    });
-    console.log(role);
+class UserRepository {
+  async create(user) {
+    return User.create(user);
+  }
+
+  async findByEmail(email) {
+    return User.findOne({ where: { email } });
+  }
+
+  async update(userId, userData) {
+    const user = await User.findOne({ where: { userId } });
+
     if (!user) {
-      return user;
-    }
-    let newUser;
-    if (role === 'sitter') {
-      // console.log(role);
-      newUser = await sitter.create({
-        UserId: user.userId,
-        career: '1년',
-      });
-      console.log(2);
-    } else {
-      newUser = await guest.create({
-        UserId: user.userId,
-      });
+      throw new Error('User not found.');
     }
 
-    return newUser;
-  };
+    // 사용자 정보 업데이트
+    user.email = userData.email;
+    user.password = userData.password; // You may choose to update the password separately with hashing
+    user.nickname = userData.nickname;
+    user.address = userData.address;
+    user.role = userData.role;
+    user.phone = userData.phone;
 
-  // 로그인
-  find = async email => {
-    const findUser = await User.findOne({ where: { email } });
-    return findUser;
-  };
+    await user.save();
+  }
+
+  async delete(userId) {
+    const user = await User.findOne({ where: { userId } });
+
+    if (!user) {
+      throw new Error('유저 정보를 찾을 수 없습니다.');
+    }
+
+    await user.destroy();
+  }
 }
 
-module.exports = UserRepositori;
+module.exports = UserRepository;

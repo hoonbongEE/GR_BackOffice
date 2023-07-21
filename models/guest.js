@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         targetKey: 'userId',
         foreignKey: 'UserId',
       });
+      this.hasMany(models.reservation, {
+        foreignKey: 'guestId',
+        as: 'reservation',
+      });
     }
   }
   guest.init(
@@ -31,18 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: 'CASCADE',
       },
-      //  sitterId: {
-      //   allowNull: false,
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     model: 'Sitters',
-      //     key: 'sitterId',
-      //   },
-      //   onDelete: 'CASCADE',
-      // career: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      // },
+
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
