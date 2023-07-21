@@ -1,43 +1,55 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class sitter extends Model {
+  class reservation extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.User, {
-        targetKey: 'userId',
-        foreignKey: 'UserId',
+      this.belongsTo(models.guest, {
+        foreignKey: 'guestId',
+        as: 'guest',
       });
-      this.hasMany(models.reservation, {
+      this.belongsTo(models.sitter, {
         foreignKey: 'sitterId',
-        as: 'reservation',
+        as: 'sitter',
       });
     }
   }
-  sitter.init(
+  reservation.init(
     {
-      sitterId: {
+      reservationsId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      UserId: {
-        // allowNull: false,
+      guestId: {
+        allowNull: false,
         type: DataTypes.INTEGER,
         references: {
-          model: 'User',
-          key: 'userId',
+          model: 'guest',
+          key: 'guestId',
         },
         onDelete: 'CASCADE',
       },
-
-      career: {
-        type: DataTypes.STRING,
+      sitterId: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'sitter',
+          key: 'sitterId',
+        },
+        onDelete: 'CASCADE',
+      },
+      startDateTime: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      endDateTime: {
+        type: DataTypes.DATE,
         allowNull: false,
       },
       createdAt: {
@@ -53,8 +65,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'sitter',
+      modelName: 'reservation',
     }
   );
-  return sitter;
+  return reservation;
 };

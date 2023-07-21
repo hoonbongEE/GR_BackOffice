@@ -2,26 +2,38 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('sitters', {
-      sitterId: {
+    await queryInterface.createTable('reservations', {
+      reservationsId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      UserId: {
+      guestId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
-          key: 'userId',
+          model: 'guests',
+          key: 'guestId',
         },
         onDelete: 'CASCADE',
       },
-
-      career: {
+      sitterId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'sitters',
+          key: 'sitterId',
+        },
+        onDelete: 'CASCADE',
+      },
+      startDateTime: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      endDateTime: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
 
       createdAt: {
@@ -38,6 +50,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('sitters');
+    await queryInterface.dropTable('reservations');
   },
 };

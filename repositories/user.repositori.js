@@ -2,7 +2,7 @@ const { User, guest, sitter } = require('../models');
 
 class UserRepositori {
   createUser = async (email, password, nickname, address, role, phone) => {
-    console.log(email);
+    // console.log(email);
     const user = await User.create({
       email,
       password,
@@ -11,7 +11,7 @@ class UserRepositori {
       role,
       phone,
     });
-    console.log(role);
+
     if (!user) {
       return user;
     }
@@ -22,7 +22,6 @@ class UserRepositori {
         UserId: user.userId,
         career: '1년',
       });
-      console.log(2);
     } else {
       newUser = await guest.create({
         UserId: user.userId,

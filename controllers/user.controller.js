@@ -23,7 +23,7 @@ class UserController {
     const { email, password } = req.body;
     const result = await this.userService.login(res, email, password);
 
-    res.status(200).json(email);
+    res.status(200).json(result);
   };
 }
 

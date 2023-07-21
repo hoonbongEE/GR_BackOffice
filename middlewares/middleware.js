@@ -15,9 +15,7 @@ const sitterAuthMiddleWare = async (req, res, next) => {
   try {
     const decodedToken = verifyToken(jwt, req, res);
     if (decodedToken.role === '손님') {
-      return res
-        .status(401)
-        .json({ message: '펫시터 권한이 존재하지 않습니다' });
+      return res.status(401).json({ message: '펫시터 권한이 존재하지 않습니다' });
     }
     const userId = decodedToken.userId;
     req.userId = userId;
