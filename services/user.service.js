@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const UserRepository = require('../repositories/user.repository');
+const UserRepository = require('../repositories/user.repositori');
 const SitterRepository = require('../repositories/sitter.repository');
 const GuestRepository = require('../repositories/guest.repository');
 const jwt = require('jsonwebtoken');
@@ -14,7 +14,7 @@ class UserService {
   async createUser(email, password, nickname, address, role, phone) {
     // bcrypt 패스워드 설정
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    // 회원가입
     const user = await this.userRepository.create({
       email,
       password: hashedPassword,
@@ -23,7 +23,6 @@ class UserService {
       role,
       phone,
     });
-
     if (role === 'sitter') {
       await this.sitterRepository.create({
         UserId: user.userId,
@@ -34,10 +33,10 @@ class UserService {
         UserId: user.userId,
       });
     }
-
     return user;
   }
 
+  // 로그인
   loginUser = async (email, password) => {
     const user = await this.userRepository.findByEmail(email);
 
@@ -50,7 +49,6 @@ class UserService {
     if (!passwordsMatch) {
       throw new Error('유효한 증명이 아닙니다.');
     }
-
     const token = jwt.sign(
       {
         userId: user.userId,
@@ -60,10 +58,10 @@ class UserService {
         expiresIn: '1h',
       }
     );
-
     return token;
   };
 
+  // 회원정보 수정
   updateUser = async (
     userId,
     email,
@@ -83,6 +81,7 @@ class UserService {
     });
   };
 
+  // 회원정보 삭제
   deleteUser = async userId => {
     await this.userRepository.delete(userId);
   };
