@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
       },
       UserId: {
-        // allowNull: false,
         type: DataTypes.INTEGER,
         references: {
           model: 'User',
@@ -31,18 +30,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: 'CASCADE',
       },
-      //  sitterId: {
-      //   allowNull: false,
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     model: 'Sitters',
-      //     key: 'sitterId',
-      //   },
-      //   onDelete: 'CASCADE',
-      // career: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      // },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

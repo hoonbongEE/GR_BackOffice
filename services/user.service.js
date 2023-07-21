@@ -1,63 +1,90 @@
-const UserRepositori = require('../repositories/user.repositori.js');
 const bcrypt = require('bcrypt');
+const UserRepository = require('../repositories/user.repository');
+const SitterRepository = require('../repositories/sitter.repository');
+const GuestRepository = require('../repositories/guest.repository');
 const jwt = require('jsonwebtoken');
 
 class UserService {
-  // constructor() {
-  userRepositori = new UserRepositori();
+  constructor() {
+    this.userRepository = new UserRepository();
+    this.sitterRepository = new SitterRepository();
+    this.guestRepository = new GuestRepository();
+  }
 
-  createUser = async (email, password, nickname, address, role, phone) => {
-    // console.log(email, password, nickname, address, role, phone);
-    try {
-      const exuser = await this.userRepositori.createUser(
-        email,
-        password,
-        nickname,
-        address,
-        role,
-        phone
-      );
-      // console.log(exuser);
-      return exuser;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  async createUser(email, password, nickname, address, role, phone) {
+    // bcrypt 패스워드 설정
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 로그인
-  login = async (res, email, password) => {
-    // console.log(email, password);
-    // 1. 이메일로 사용자 정보 조회
-    const userlogin = await this.userRepositori.find(email);
-    // console.log(email);
+    const user = await this.userRepository.create({
+      email,
+      password: hashedPassword,
+      nickname,
+      address,
+      role,
+      phone,
+    });
 
-    // 2. 사용자 정보가 없으면 인증 실패
-    if (!userlogin || userlogin.length === 0) {
-      console.log('1>');
-      return res
-        .status(401)
-        .json({ errorMessage: '아이디 또는 패스워드를 확인해주세요.' });
+    if (role === 'sitter') {
+      await this.sitterRepository.create({
+        UserId: user.userId,
+        career: '1 year',
+      });
+    } else {
+      await this.guestRepository.create({
+        UserId: user.userId,
+      });
     }
 
-    // 3. 비밀번호 비교
-    // const isValidPassword = await bcrypt.compare(password, userlogin.password);
-    // if (!isValidPassword) {
-    //   console.log('2>');
-    //   return res
-    //     .status(401)
-    //     .json({ errorMessage: '아이디 또는 패스워드를 확인해주세요 ' });
-    // }
+    return user;
+  }
 
-    // 4. 로그인 성공 시 JWT 토큰 생성
+  loginUser = async (email, password) => {
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new Error('유효한 이메일이 아닙니다.');
+    }
+
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordsMatch) {
+      throw new Error('유효한 증명이 아닙니다.');
+    }
+
     const token = jwt.sign(
-      { userId: userlogin.userId },
+      {
+        userId: user.userId,
+      },
       process.env.JWT_SECRET,
       {
-        expiresIn: '1h', // 토큰 만료 시간 설정 (1시간)
+        expiresIn: '1h',
       }
     );
-    res.cookie('authorization', `Bearer ${token}`);
-    return userlogin;
+
+    return token;
+  };
+
+  updateUser = async (
+    userId,
+    email,
+    password,
+    nickname,
+    address,
+    role,
+    phone
+  ) => {
+    await this.userRepository.update(userId, {
+      email,
+      password,
+      nickname,
+      address,
+      role,
+      phone,
+    });
+  };
+
+  deleteUser = async userId => {
+    await this.userRepository.delete(userId);
   };
 }
 
