@@ -52,3 +52,5 @@ const defaultValidate = {
 };
 
 module.exports = defaultValidate;
+
+// 풀 리퀘스트를 위한 주석 처리
