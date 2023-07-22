@@ -5,7 +5,7 @@ class UserController {
     this.userService = new UserService();
   }
 
-  // 회원가입
+  // 회원가입 기능
   signup = async (req, res, next) => {
     try {
       const { email, password, nickname, address, role, phone } = req.body;
@@ -42,7 +42,7 @@ class UserController {
   };
 
   // 회원정보 수정
-  updateUser = async (req, res) => {
+  updateUser = async (req, res, next) => {
     try {
       const { email, password, nickname, address, role, phone } = req.body;
       const { userId } = req.params;

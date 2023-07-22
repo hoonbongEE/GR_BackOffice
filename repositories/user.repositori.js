@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const { sitter } = require('../models');
 
 class UserRepository {
   async create(user) {
@@ -11,14 +12,15 @@ class UserRepository {
 
   async update(userId, userData) {
     const user = await User.findOne({ where: { userId } });
+    console.log('유저어 : ', user);
 
     if (!user) {
-      throw new Error('User not found.');
+      throw new Error('유저를 찾을 수 없습니다.');
     }
 
     // 사용자 정보 업데이트
     user.email = userData.email;
-    user.password = userData.password; // You may choose to update the password separately with hashing
+    user.password = userData.password;
     user.nickname = userData.nickname;
     user.address = userData.address;
     user.role = userData.role;
