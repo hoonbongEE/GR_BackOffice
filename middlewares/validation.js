@@ -40,6 +40,11 @@ const defaultValidate = {
         '숫자와 문자, 기호를 포함한 6~12자리 비밀번호를 입력해주세요.'
       ),
     body('address').optional({ nullable: true, checkFalsy: true }),
+    body('role')
+      .trim()
+      .notEmpty()
+      .isIn(['sitter', 'guest'])
+      .withMessage('sitter 혹은 guest로 역할을 정해주세요.'),
     body('phone')
       .not()
       .contains('-')
@@ -52,5 +57,3 @@ const defaultValidate = {
 };
 
 module.exports = defaultValidate;
-
-// 풀 리퀘스트를 위한 주석 처리
