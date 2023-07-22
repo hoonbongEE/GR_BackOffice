@@ -11,10 +11,10 @@ class UserService {
     this.guestRepository = new GuestRepository();
   }
 
-  async createUser(email, password, nickname, address, role, phone) {
+  // 회원가입
+  createUser = async (email, password, nickname, address, role, phone) => {
     // bcrypt 패스워드 설정
     const hashedPassword = await bcrypt.hash(password, 10);
-    // 회원가입
     const user = await this.userRepository.create({
       email,
       password: hashedPassword,
@@ -26,7 +26,7 @@ class UserService {
     if (role === 'sitter') {
       await this.sitterRepository.create({
         UserId: user.userId,
-        career: '1 year',
+        career: '펫시터',
       });
     } else {
       await this.guestRepository.create({
@@ -34,7 +34,7 @@ class UserService {
       });
     }
     return user;
-  }
+  };
 
   // 로그인
   loginUser = async (email, password) => {
@@ -71,14 +71,45 @@ class UserService {
     role,
     phone
   ) => {
-    await this.userRepository.update(userId, {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await this.userRepository.update(userId, {
       email,
-      password,
+      password: hashedPassword,
       nickname,
       address,
       role,
       phone,
     });
+
+    if (role === 'sitter') {
+      const isSitter = await this.sitterRepository.findByUserId(userId);
+      const isGuest = await this.guestRepository.findByUserId(userId);
+
+      if (isSitter) {
+      } else {
+        if (isGuest) {
+          await this.guestRepository.delete(userId);
+        }
+        await this.sitterRepository.create({
+          UserId: userId,
+          career: '펫시터',
+        });
+      }
+    } else {
+      const isGuest = await this.guestRepository.findByUserId(userId);
+      const isSitter = await this.sitterRepository.findByUserId(userId);
+
+      if (isGuest) {
+      } else {
+        if (isSitter) {
+          await this.sitterRepository.delete(userId);
+        }
+        await this.guestRepository.create({
+          UserId: userId,
+        });
+      }
+    }
   };
 
   // 회원정보 삭제

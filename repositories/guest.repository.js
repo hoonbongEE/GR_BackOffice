@@ -1,8 +1,19 @@
 const { guest } = require('../models');
+// const { User } = require('../models');
 
 class GuestRepository {
+  async findByUserId(userId) {
+    return guest.findOne({ where: { userId } });
+  }
+
   async create(data) {
     return guest.create(data);
+  }
+
+  async delete(userId) {
+    const delguest = await guest.findOne({ where: { userId } });
+
+    (await delguest) !== null ? delguest.destroy() : '';
   }
 }
 

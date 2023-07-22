@@ -40,6 +40,44 @@ const defaultValidate = {
         '숫자와 문자, 기호를 포함한 6~12자리 비밀번호를 입력해주세요.'
       ),
     body('address').optional({ nullable: true, checkFalsy: true }),
+    body('role')
+      .trim()
+      .notEmpty()
+      .isIn(['sitter', 'guest'])
+      .withMessage('sitter 혹은 guest로 역할을 정해주세요.'),
+    body('phone')
+      .not()
+      .contains('-')
+      .withMessage("'-'를 빼고 입력해주세요.")
+      .isLength({ min: 10, max: 11 })
+      .withMessage('핸드폰 번호를 확인해주세요.')
+      .optional({ nullable: true, checkFalsy: true }),
+    validate,
+  ],
+  updateUser: [
+    body('nickname').trim().notEmpty().withMessage('닉네임을 입력해주세요.'),
+    body('email')
+      .isEmail()
+      .normalizeEmail()
+      .withMessage('이메일 형식이 아닙니다. 확인해주세요.'),
+    body('password')
+      .custom((value, { req }) => {
+        if (value != req.body.confirm) {
+          throw new Error('확인 비밀번호와 일치하지 않습니다.');
+        } else {
+          return value;
+        }
+      })
+      .matches(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,12}$/)
+      .withMessage(
+        '숫자와 문자, 기호를 포함한 6~12자리 비밀번호를 입력해주세요.'
+      ),
+    body('address').optional({ nullable: true, checkFalsy: true }),
+    body('role')
+      .trim()
+      .notEmpty()
+      .isIn(['sitter', 'guest'])
+      .withMessage('sitter 혹은 guest로 역할을 정해주세요.'),
     body('phone')
       .not()
       .contains('-')
@@ -52,5 +90,3 @@ const defaultValidate = {
 };
 
 module.exports = defaultValidate;
-
-// 풀 리퀘스트를 위한 주석 처리
