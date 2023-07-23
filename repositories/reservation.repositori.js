@@ -1,15 +1,8 @@
 const { reservation, guest } = require('../models');
-const { Op } = require('sequelize');
 
 class RservationRepositori {
   // 예약 등록
-  createResulve = async (
-    startDateTime,
-    endDateTime,
-    guestId,
-    sitterId,
-    userId
-  ) => {
+  createResulve = async (startDateTime, endDateTime, guestId, sitterId, userId) => {
     const resulveRepositori = await reservation.create({
       startDateTime,
       endDateTime,
@@ -17,37 +10,9 @@ class RservationRepositori {
       sitterId,
       userId,
     });
-    // console.log(userId);
+
     return resulveRepositori;
   };
-  // 중복 예약 로직
-  // findResulve = async (startDateTime, endDateTime, guestId, sitterId) => {
-  //   const RedundancyReservation = await reservation.findAll({
-  //     where: {
-  //       guestId, // 예약자 아이디
-  //       sitterId, // 시터 아이디
-  //       [Op.or]: [
-  //         {
-  //           startTime: {
-  //             [Op.between]: [startDateTime, endDateTime],
-  //           },
-  //         },
-  //         {
-  //           endTime: {
-  //             [Op.between]: [startDateTime, endDateTime],
-  //           },
-  //         },
-  //         {
-  //           [Op.and]: [
-  //             { startTime: { [Op.lte]: startDateTime } },
-  //             { endTime: { [Op.gte]: endDateTime } },
-  //           ],
-  //         },
-  //       ],
-  //     },
-  //   });
-  //   return RedundancyReservation;
-  // };
 
   // 예약 삭제
   destroyResulve = async (reservationsId, userId) => {
@@ -60,7 +25,6 @@ class RservationRepositori {
         attributes: ['guestId'],
       },
     });
-    // console.log(a);
 
     if (!a) {
       return false;
@@ -81,8 +45,6 @@ class RservationRepositori {
 
   // 예약 수정
   putResulve = async (startDateTime, endDateTime, reservationsId, userId) => {
-    const findRepositori = await reservation.findAll({});
-
     const resulveRepositori = await reservation.update(
       {
         startDateTime,

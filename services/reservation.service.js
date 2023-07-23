@@ -13,13 +13,7 @@ class ReservationService {
         sitterId,
         userId
       );
-      // const RedundancyReservation = await tihs.ReservationRepositori.findResulve(
-      //   startDateTime,
-      //   endDateTime,
-      //   guestId,
-      //   sitterId
-      // );
-      // if (!RedundancyReservation) return { status: 400, message: '중복된 예약입니다.!' };
+
       if (!startDateTime) return { status: 400, message: '예약 시작 날짜를 입력해주세요!' };
       else if (startDateTime === endDateTime)
         return { status: 400, message: '예약 시작 날짜와 종료 날짜가 같으면 안됩니다!' };

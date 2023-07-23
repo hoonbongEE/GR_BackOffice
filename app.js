@@ -1,7 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv'); //env환경변수를 로드하기 위해 가져옴
-
 const app = express();
 
 dotenv.config();

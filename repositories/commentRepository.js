@@ -27,17 +27,11 @@ async function updateComment(commentId, text, rating) {
 // 댓글 삭제
 async function deleteComment(commentId) {
   const comment = await comments.findByPk(commentId);
-  // const comment = await comments.findOne({ where: { commentId } });
-  console.log('넌 뭐냐아아아아아 :', comment);
   if (!comment) {
     throw new Error('해당 댓글을 찾을 수 없습니다.');
   }
   await comment.destroy();
 }
-
-// const delsitter = await sitter.findOne({ where: { userId } });
-
-// (await delsitter) !== null ? delsitter.destroy() : '';
 
 module.exports = {
   getCommentsBySitterId,

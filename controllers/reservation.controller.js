@@ -49,7 +49,6 @@ class ReservationController {
   };
 
   // 예약 수정
-
   putresulve = async (req, res, next) => {
     const { startDateTime, endDateTime } = req.body;
     const userId = req.userId;
