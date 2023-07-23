@@ -5,6 +5,6 @@ const userRouter = require('./user.routes');
 const reservationRouter = require('./reservation.routes');
 const commentRouter = require('./comments');
 
-router.use('/', userRouter, reservationRouter, commentRouter); // 라우터 통일
+router.use('/', userRouter, reservationRouter, commentRouter);
 
 module.exports = router;
