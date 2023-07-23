@@ -32,7 +32,7 @@ class UserController {
       const { email, password } = req.body;
 
       const token = await this.userService.loginUser(email, password);
-      await res.cookie('authorization', `petsitter ${token}`);
+      await res.cookie('authorization', `Bearer ${token}`); // 토큰 수정
 
       return res.status(200).json({ message: '로그인이 완료되었습니다.' });
     } catch (error) {
@@ -42,7 +42,7 @@ class UserController {
   };
 
   // 회원정보 수정
-  updateUser = async (req, res, next) => {
+  updateUser = async (req, res) => {
     try {
       const { email, password, nickname, address, role, phone } = req.body;
       const { userId } = req.params;
